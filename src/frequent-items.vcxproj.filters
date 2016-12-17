@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ccfc.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="countmin.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hh.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lossycount.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rand48.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="losum.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="alosum.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="prng.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ccfc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="countmin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lossycount.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="prng.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rand48.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="losum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="alosum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
