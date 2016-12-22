@@ -204,7 +204,7 @@ void ALS_AddItem(ALS_type *ALS, ALSitem_t item, ALSweight_t value) {
 	// save the current item
 	counter->item = item;
 	// save the current hash
-	counter->hash = hashval; //TODO FOR SOME REASON HASH POINTS BACK TO HASH TABLE?
+	counter->hash = hashval; 
 	// update the upper bound on the items frequency
 	counter->count = value; 	
 }
@@ -273,7 +273,7 @@ DWORD WINAPI ALS_Maintenance(LPVOID lpParam) {
 	// FINISH MAINTENANCE	
 	// dnd quantile
 	ALS_type* ALS = (ALS_type*) lpParam;
-	int k = ALS->nPassive - ceil(1 / ALS->epsilon)+1;// TODO Added + 1
+	int k = ALS->nPassive - ceil(1 / ALS->epsilon)+1;
 	if (k >= 0) {
 		for (int i = 0; i < ALS->nPassive; ++i) {
 			ALS->buffer[i] = ALS->passiveCounters[i].count;
