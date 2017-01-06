@@ -167,7 +167,6 @@ Assume: No items are deleted during the runtime of the function.
 LSCounter * LS_FindItemInLocation(LS_type * LS, LSitem_t item, LSCounter** location)
 { // find a particular item in the date structure and return a pointer to it
 	LSCounter * hashptr;
-	// TODO: Make sure that the head of the list is updated only after the rest of the chain is complete.
 	hashptr = *location;
 	// compute the hash value of the item, and begin to look for it in 
 	// the hash table
@@ -347,7 +346,7 @@ DWORD WINAPI LS_Maintenance(LPVOID lpParam) {
 		if (LS->done)
 			return 0;
 		//std::cerr << "Calculating median..." << std::endl;
-		int k = LS->nPassive - ceil(1 / LS->epsilon);// + 1;// TODO Added + 1
+		int k = LS->nPassive - ceil(1 / LS->epsilon);
 		if (k >= 0) {
 			int median = in_place_find_kth(LS->buffer, LS->nPassive, k, 1, LS->quantile + 1, LS);
 			if (median > LS->quantile) {
@@ -431,7 +430,7 @@ void LS_DoSomeCopying(LS_type * LS) {
 	assert(updatesLeft >= 0);
 	LS->stepsLeft = (LS->hashsize + 24 * LS->nPassive) + 1 - LS->copied2Buffer;
 	int stepsLeftThisUpdate = LS->stepsLeft / (updatesLeft + 1);
-	int k = LS->nPassive - ceil(1 / LS->epsilon);// + 1;// TODO Added + 1
+	int k = LS->nPassive - ceil(1 / LS->epsilon);
 	if (k >= 0) {
 		for (int i = 0; i < stepsLeftThisUpdate; ++i) {
 			if (LS->copied2Buffer >= LS->nPassive) {
