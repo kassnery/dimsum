@@ -7,6 +7,8 @@ import cPickle
 phindex = int(raw_input("Enter phindex: "))
 phi = 2**-phindex
 
+show_legend = True if raw_input("Show legend? (y/n)")=="y" else False
+
 RUNS = 8
 
 # do latex figures
@@ -20,7 +22,7 @@ print "Figure size:", fig_size
 params = {'backend': 'ps',
            'axes.labelsize': 2*10,
            'text.fontsize': 2*10,
-           'legend.fontsize': 2*10,
+           'legend.fontsize': 2*7,
            'xtick.labelsize': 2*8,
            'ytick.labelsize': 2*8,
            'text.usetex': True,
@@ -33,7 +35,7 @@ fn = "../src/Release/hh-zipf.exe"
 
 try:
     speeds = cPickle.load(open(
-        "Skew {} Runs {} Phindex Gamma 4 Single Run.pkl".format(RUNS, phindex),
+        "../results/Skew {} Runs {} Phindex Gamma 4 Single Run.pkl".format(RUNS, phindex),
         'rb'))
 except:
     speeds = []
@@ -62,13 +64,13 @@ except:
 
     cPickle.dump(
         speeds,
-        open("Skew {} Runs {} Phindex Gamma 4 Single Run.pkl".format(RUNS, phindex),'wb')
+        open("../results/Skew {} Runs {} Phindex Gamma 4 Single Run.pkl".format(RUNS, phindex),'wb')
         )
 
 
 try:
     speeds_gamma_1 = cPickle.load(open(
-        "Skew {} Runs {} Phindex Gamma 1 Single Run.pkl".format(RUNS, phindex),
+        "../results/Skew {} Runs {} Phindex Gamma 1 Single Run.pkl".format(RUNS, phindex),
         'rb'))
 except:
     speeds_gamma_1 = []
@@ -98,7 +100,9 @@ except:
 
     cPickle.dump(
         speeds_gamma_1,
-        open("Skew {} Runs {} Phindex Gamma 1 Single Run.pkl".format(RUNS, phindex),'wb')
+        open("../results/Skew {} Runs {} Phindex Gamma 1 Single Run.pkl".format(RUNS,
+                                                                     phindex),
+             'wb')
         )
 
 
@@ -117,15 +121,19 @@ for algorithm in speeds_gamma_1[0].keys():
 
 
 plt.plot(zs, average_speeds["ALS"], "-D", label="IM-SUM $\gamma=4$")
+plt.plot(zs, average_speeds_gamma_1["ALS"], "--D", color = 'b', label="IM-SUM $\gamma=1$")
 plt.plot(zs, average_speeds["LS"],"-d",label="DIM-SUM $\gamma=4$")
+plt.plot(zs, average_speeds_gamma_1["LS"],"--d", color = 'g', label="DIM-SUM $\gamma=1$")
 plt.plot(zs, average_speeds["SSH"],"-o",label="SSH")
+plt.plot(zs, average_speeds["CM"],"-+",label="CM")
 plt.plot(zs, average_speeds["CMH"],"-^",label="CMH")
-plt.plot(zs, average_speeds["CCFC"],"-v",label="CS")
-plt.plot(zs, average_speeds_gamma_1["ALS"], "--D", label="IM-SUM $\gamma=1$")
-plt.plot(zs, average_speeds_gamma_1["LS"],"--d",label="DIM-SUM $\gamma=1$")
+plt.plot(zs, average_speeds["CCFC"],"-v",label="AGT")
+
+
 plt.xlabel("Skew")
 plt.ylabel("Updates/ms")
-plt.legend(loc="right")
+if show_legend:
+    plt.legend(loc="center")
 plt.tight_layout()
 fig = plt.gcf()
 fig.canvas.set_window_title("Skew {} Runs {} Phindex Single Run".format(RUNS,

@@ -1,0 +1,8 @@
+src/*.sdf
+figures/*
+results/*
+src/.*
+src/Debug/*
+src/Release/*
+src/*.sdf
+src/hh-zipf

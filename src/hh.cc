@@ -209,13 +209,15 @@ void PrintOutput(char* title, size_t size, const Stats& S, size_t u32NumberOfPac
 		for (size_t i = 0; i < (i95 - i5); ++i) ++it;
 		f295th = *it;
 	}
-
+	if (S.dU <= 0) {
+		printf("Error! Total update time %f not positive\n", S.dU);
+	}
 	printf("%s\t%1.2f\t%d\t%1.2f\t%1.2f\t%1.2f\t%1.2f\t%1.2f\t%1.2f\t%1.2f\t%1.2f\t%1.2f\t%1.2f\t%1.2f\t%1.2f\n",
 		title, u32NumberOfPackets / S.dU, size,
-		S.dR / S.R.size(), r5th, r95th,
-		S.dP / S.P.size(), p5th, p95th,
-		S.dF / S.F.size(), f5th, f95th,
-		S.dF2 / S.F2.size(), f25th, f295th
+		(S.R.size() > 0) ? S.dR / S.R.size():0, r5th, r95th,
+		(S.P.size() > 0) ? S.dP / S.P.size():0, p5th, p95th,
+		(S.F.size() > 0) ? S.dF / S.F.size():0, f5th, f95th,
+		(S.F2.size()> 0) ? S.dF2 / S.F2.size():0, f25th, f295th
 	);
 }
 
@@ -238,7 +240,7 @@ int main(int argc, char **argv)
 	double dPhi = 0.001;//0.000001;//0.001;
 	double gamma = 4.;
 	bool gammaDefined = false;
-	uint32_t u32Depth = 4;
+	uint32_t u32Depth = 10;
 	uint32_t u32Granularity = 8;
 	std::string file = "";
 	bool timeLaspe = false;
@@ -357,9 +359,10 @@ int main(int argc, char **argv)
 
 	uint32_t u32DomainSize = 1048575;
 	std::vector<uint32_t> exact(u32DomainSize + 1, 0);
-	Stats SLS, SCMH, SCCFC, SALS, SLCL;
-	std::vector<uint64_t> TLS, TCMH, TCCFC, TALS, TLCL;
+	Stats SLS, SCM ,SCMH, SCCFC, SALS, SLCL;
+	std::vector<uint64_t> TLS, TCM, TCMH, TCCFC, TALS, TLCL;
 	CMH_type* cmh = CMH_Init(u32Width, u32Depth, 32, u32Granularity);
+	CM_type* cm = CM_Init(u32Width, u32Depth, 0);
 	CCFC_type* ccfc = CCFC_Init(u32Width, u32Depth, 32, u32Granularity);
 	LCL_type* lcl = LCL_Init(dPhi);
 	LS_type* ls = LS_Init(dPhi, gamma);
@@ -436,6 +439,7 @@ int main(int argc, char **argv)
 			break;
 		}
 		if (!gammaDefined) {
+			// we don't want to evaluate these algorithms for those graphs.
 			StartTheClock(nsecs);
 			for (size_t i = stStreamPos; i < stStreamPos + stRunSize; ++i)
 			{
@@ -443,6 +447,14 @@ int main(int argc, char **argv)
 			}
 			SCMH.dU += t = StopTheClock(nsecs);
 			TCMH.push_back(t);
+
+			StartTheClock(nsecs);
+			for (size_t i = stStreamPos; i < stStreamPos + stRunSize; ++i)
+			{
+				CM_Update(cm, data[i], values[i]);
+			}
+			SCM.dU += t = StopTheClock(nsecs);
+			TCM.push_back(t);
 
 			StartTheClock(nsecs);
 			for (size_t i = stStreamPos; i < stStreamPos + stRunSize; ++i)
@@ -483,6 +495,7 @@ int main(int argc, char **argv)
 		std::map<uint32_t, uint32_t> res;
 		
 		if (!gammaDefined) {
+			// we don't want to evaluate thse algorithms for those graphs
 			StartTheClock(nsecs);
 			res = CMH_FindHH(cmh, thresh);
 			SCMH.dQ += StopTheClock(nsecs);
@@ -513,7 +526,8 @@ int main(int argc, char **argv)
 	if (timeLaspe) {
 		PrintTimes("IM-SUM", TALS);
 		PrintTimes("DIM-SUM", TLS);
-		PrintTimes("CM", TCMH);
+		PrintTimes("CM", TCM);
+		PrintTimes("CMH", TCMH);
 		PrintTimes("CS", TCCFC);
 		PrintTimes("SSH", TLCL);
 	}
@@ -523,11 +537,13 @@ int main(int argc, char **argv)
 		PrintOutput("ALS", ALS_Size(als), SALS, stNumberOfPackets);
 		PrintOutput("LS", LS_Size(ls), SLS, stNumberOfPackets);
 		if (!gammaDefined) {
+			PrintOutput("CM", CM_Size(cm), SCM, stNumberOfPackets);
 			PrintOutput("CMH", CMH_Size(cmh), SCMH, stNumberOfPackets);
 			PrintOutput("CCFC", CCFC_Size(ccfc), SCCFC, stNumberOfPackets);
 			PrintOutput("SSH", LCL_Size(lcl), SLCL, stNumberOfPackets);
 		}
 	}
+	CM_Destroy(cm);
 	CMH_Destroy(cmh);
 	LCL_Destroy(lcl);  
 	LS_Destroy(ls);
